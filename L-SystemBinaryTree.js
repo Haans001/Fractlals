@@ -1,36 +1,66 @@
-var axiom;
+var axiom = "X";
 var rules;
+var len = 150;
+var angle;
 
 function setup() {
-  createCanvas(400, 400);
-  axiom = "0";
+  createCanvas(800, 900);
+  background(0);
+  angle = radians(-26);
+  stroke(255, 166, 33);
+  strokeWeight(1);
+  let button = createButton("Generate");
   rules = {
-  "0" : "1[0]0",
-  "1" : "11"
-}
-  generate(axiom)
-  
-}
-
-function draw() {
-  
+    X: "F+[[X]-X]-F[-FX]+X",
+    F: "FF"
+  };
+  button.mousePressed(generate);
+  turtle();
 }
 
-function generate(axiom){
-  
-  if(axiom.length> 50) return;
-  
-    let newAxiom = '';
-    for(let i=0;i<axiom.length;i++){
-      if(axiom.charAt(i) == '[') {
-        newAxiom+= '[';
+function turtle() {
+  background(0);
+  resetMatrix();
+  translate(width / 2, height);
+  for (let i = 0; i < axiom.length; i++) {
+    let current = axiom.charAt(i);
+
+    switch (current) {
+      case "F": {
+        line(0, 0, 0, -len);
+        translate(0, -len);
+        break;
       }
-      else if(axiom.charAt(i) == ']'){
-        newAxiom+= ']';
+      case "-": {
+        rotate(-angle);
+        break;
       }
-      else{newAxiom+= rules[axiom.charAt(i)];}
-      
+      case "+": {
+        rotate(angle);
+        break;
+      }
+      case "[": {
+        push();
+        break;
+      }
+      case "]": {
+        pop();
+        break;
+      }
     }
-  console.log(newAxiom);
-  generate(newAxiom);
+  }
+}
+
+function generate() {
+  len *= 0.56;
+  let newAxiom = "";
+  for (let i = 0; i < axiom.length; i++) {
+    if (rules[axiom.charAt(i)] === undefined) {
+      newAxiom += axiom.charAt(i);
+    } else {
+      newAxiom += rules[axiom.charAt(i)];
+    }
+  }
+  axiom = newAxiom;
+  turtle();
 }
